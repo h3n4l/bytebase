@@ -729,6 +729,21 @@ MIIEvQ...
   </div>
 
   <div
+    v-if="basicInfo.engine == Engine.COCKROACHDB"
+    class="mt-4 sm:col-span-3 sm:col-start-1"
+  >
+    <label for="clusterIdentifier" class="textlabel block">
+      {{ $t("data-source.cluster-identifier") }}
+    </label>
+    <NInput
+      v-model:value="dataSource.cluster"
+      class="mt-2 w-full"
+      :disabled="!allowEdit"
+      :placeholder="'prod-cluster-7749'"
+    />
+  </div>
+
+  <div
     v-if="
       showSSL &&
       dataSource.authenticationType === DataSource_AuthenticationType.PASSWORD

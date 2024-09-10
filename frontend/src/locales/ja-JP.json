@@ -2306,7 +2306,8 @@
     "replica-set": "レプリカセット",
     "admin": "メインライブラリ",
     "read-only": "図書館から",
-    "direct-connection": "Direct Connection"
+    "direct-connection": "Direct Connection",
+    "cluster-identifier": "クラスター識別子"
   },
   "setting": {
     "project": {

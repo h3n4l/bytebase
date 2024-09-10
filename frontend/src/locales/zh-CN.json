@@ -2306,7 +2306,8 @@
     "replica-set": "副本集",
     "admin": "管理员",
     "read-only": "只读",
-    "direct-connection": "Direct Connection"
+    "direct-connection": "Direct Connection",
+    "cluster-identifier": "集群标识符"
   },
   "setting": {
     "project": {

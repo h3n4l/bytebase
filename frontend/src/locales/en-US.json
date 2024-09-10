@@ -2306,7 +2306,8 @@
     "replica-set": "Replica Set",
     "admin": "Admin",
     "read-only": "RO",
-    "direct-connection": "Direct Connection"
+    "direct-connection": "Direct Connection",
+    "cluster-identifier": "Cluster Identifier"
   },
   "setting": {
     "project": {
