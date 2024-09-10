@@ -820,6 +820,9 @@ func (s *InstanceService) UpdateDataSource(ctx context.Context, request *v1pb.Up
 			obfuscated := common.Obfuscate(request.DataSource.MasterPassword, s.secret)
 			dataSource.MasterObfuscatedPassword = obfuscated
 			patch.MasterObfuscatedPassword = &obfuscated
+		case "cluster":
+			dataSource.Cluster = request.DataSource.Cluster
+			patch.Cluster = &request.DataSource.Cluster
 		default:
 			return nil, status.Errorf(codes.InvalidArgument, `unsupport update_mask "%s"`, path)
 		}
@@ -1134,6 +1137,7 @@ func convertToV1DataSources(dataSources []*store.DataSourceMessage) ([]*v1pb.Dat
 			RedisType:              convertToV1RedisType(ds.RedisType),
 			MasterName:             ds.MasterName,
 			MasterUsername:         ds.MasterUsername,
+			Cluster:                ds.Cluster,
 		})
 	}
 
@@ -1337,6 +1341,7 @@ func (s *InstanceService) convertToDataSourceMessage(dataSource *v1pb.DataSource
 		MasterName:                         dataSource.MasterName,
 		MasterUsername:                     dataSource.MasterUsername,
 		MasterObfuscatedPassword:           common.Obfuscate(dataSource.MasterPassword, s.secret),
+		Cluster:                            dataSource.Cluster,
 	}, nil
 }
 

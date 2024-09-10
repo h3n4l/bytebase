@@ -58,6 +58,7 @@ type DataSourceMessage struct {
 	MasterName               string
 	MasterUsername           string
 	MasterObfuscatedPassword string
+	Cluster                  string
 }
 
 // FindDataSourceMessage is the message for finding a database.
@@ -105,6 +106,7 @@ func (m *DataSourceMessage) Copy() *DataSourceMessage {
 		MasterName:                         m.MasterName,
 		MasterUsername:                     m.MasterUsername,
 		MasterObfuscatedPassword:           m.MasterObfuscatedPassword,
+		Cluster:                            m.Cluster,
 	}
 }
 
@@ -154,6 +156,7 @@ type UpdateDataSourceMessage struct {
 	MasterName               *string
 	MasterUsername           *string
 	MasterObfuscatedPassword *string
+	Cluster                  *string
 }
 
 func (*Store) listInstanceDataSourceMap(ctx context.Context, tx *Tx, find *FindDataSourceMessage) (map[string][]*DataSourceMessage, error) {
@@ -244,6 +247,7 @@ func (*Store) listInstanceDataSourceMap(ctx context.Context, tx *Tx, find *FindD
 		dataSourceMessage.MasterName = dataSourceOptions.MasterName
 		dataSourceMessage.MasterObfuscatedPassword = dataSourceOptions.MasterObfuscatedPassword
 		dataSourceMessage.MasterUsername = dataSourceOptions.MasterUsername
+		dataSourceMessage.Cluster = dataSourceOptions.Cluster
 		instanceDataSourcesMap[instanceID] = append(instanceDataSourcesMap[instanceID], &dataSourceMessage)
 	}
 	if err := rows.Err(); err != nil {
@@ -458,6 +462,9 @@ func (s *Store) UpdateDataSourceV2(ctx context.Context, patch *UpdateDataSourceM
 	if v := patch.MasterObfuscatedPassword; v != nil {
 		optionSet, args = append(optionSet, fmt.Sprintf("jsonb_build_object('masterObfuscatedPassword', $%d::TEXT)", len(args)+1)), append(args, *v)
 	}
+	if v := patch.Cluster; v != nil {
+		optionSet, args = append(optionSet, fmt.Sprintf("jsonb_build_object('cluster', $%d::TEXT)", len(args)+1)), append(args, *v)
+	}
 	if len(optionSet) != 0 {
 		set = append(set, fmt.Sprintf(`options = options || %s`, strings.Join(optionSet, "||")))
 	}
@@ -520,6 +527,7 @@ func (*Store) addDataSourceToInstanceImplV2(ctx context.Context, tx *Tx, instanc
 		MasterName:                         dataSource.MasterName,
 		MasterUsername:                     dataSource.MasterName,
 		MasterObfuscatedPassword:           dataSource.MasterObfuscatedPassword,
+		Cluster:                            dataSource.Cluster,
 	}
 	protoBytes, err := protojson.Marshal(&dataSourceOptions)
 	if err != nil {
