@@ -440,6 +440,8 @@ CREATE TABLE instance (
     -- global unique
     resource_id text NOT NULL PRIMARY KEY,
     workspace text NOT NULL REFERENCES workspace(resource_id),
+    -- NULL for workspace instances; set for project instances.
+    project text REFERENCES project(resource_id),
     deleted boolean NOT NULL DEFAULT FALSE,
     environment text,
     -- Stored as Instance (proto/store/store/instance.proto)
@@ -447,6 +449,7 @@ CREATE TABLE instance (
 );
 
 CREATE INDEX idx_instance_workspace ON instance(workspace);
+CREATE INDEX idx_instance_project ON instance(project) WHERE project IS NOT NULL;
 CREATE INDEX idx_instance_metadata_engine ON instance((metadata->>'engine'));
 
 -- db stores the databases for a particular instance
@@ -636,6 +639,10 @@ CREATE TABLE oauth2_refresh_token (
     -- Workspace inherited from the authorization code that originally issued
     -- this refresh token; preserved across refresh.
     workspace text REFERENCES workspace(resource_id),
+    -- Stored as OAuth2RefreshTokenConfig (proto/store/store/oauth2.proto): the
+    -- consented resource and scope, inherited from the authorization code and
+    -- carried forward unchanged by every refresh.
+    config jsonb NOT NULL DEFAULT '{}',
     expires_at timestamptz NOT NULL
 );
 
